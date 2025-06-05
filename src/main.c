@@ -39,17 +39,17 @@ int listenfd() {
 int main(void) {
     int lfd = listenfd();
 
-    strb reqb = {0};
-
     int rfd, n;
+    strb reqb = {0};
     for(int i=0; i<5; ++i) {
         if((rfd = accept(lfd, NULL, NULL)) == -1) {
             perror("ERROR: accept");
             continue;
         }
 
-        reqb.count = 0;
         const int req_window = 2048;
+
+        reqb.count = 0;
         da_reserve(&reqb, req_window);
         while((n = recv(rfd, reqb.items + reqb.count, req_window, 0)) == req_window) {
             reqb.count += req_window;
@@ -67,6 +67,7 @@ int main(void) {
         printf(STR_FMT, STR_ARG(req));
 
         const char* res = "HTTP/1.1 200 OK\r\n\r\nHELLO";
+
         if(send(rfd, res, strlen(res), 0) == -1) {
             close(rfd);
             perror("ERROR: send");
