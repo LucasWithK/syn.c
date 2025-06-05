@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "da.h"
+#include "str.h"
 
 typedef struct {
     int *items;
@@ -8,22 +8,17 @@ typedef struct {
     size_t capacity;
 } ints;
 
-
 int main(void) {
-    ints is = {0};
 
-    da_append(&is, 0);
+    str s = {0};
 
-    int as[] = {1, 2};
-    da_append_many(&is, as, 2);
+    str_append(&s, "Hello, World");
 
-    da_resize(&is, 15);
+    str_push(&s, '!');
 
-    for(size_t i=0; i<is.count; ++i) {
-        printf("%d\n", is.items[i]);
-    }
+    printf("CONTENT "STRV_FMT" END\n", STRV_ARG(s));
 
-    da_free(is);
+    str_free(s);
 
     return 0;
 }
