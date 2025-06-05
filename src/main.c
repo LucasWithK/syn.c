@@ -1,41 +1,84 @@
 #include <stdio.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+
+#include "da.h"
 
 #define STR_IMPLEMENTATION
 #include "str.h"
 
-typedef struct {
-    int *items;
-    size_t count;
-    size_t capacity;
-} ints;
+int listenfd() {
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
+    if(fd == -1) {
+        perror("ERROR: socket");
+        exit(EXIT_FAILURE);
+    }
+
+    struct sockaddr_in addr = {0};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(8080);
+    addr.sin_addr.s_addr = INADDR_ANY;
+
+    if(bind(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
+        close(fd);
+        perror("ERROR: bind");
+        exit(EXIT_FAILURE);
+    }
+
+    const int max_con_reqs = 10;
+    if(listen(fd, max_con_reqs) == -1) {
+        close(fd);
+        perror("ERROR: listen");
+        exit(EXIT_FAILURE);
+    }
+
+    return fd;
+}
 
 int main(void) {
+    int lfd = listenfd();
 
-    strb sb = {0};
+    const int req_buf_size = 1024;
+    char req_buf[req_buf_size];
 
-    strb_append(&sb, "Hello, World");
+    strb reqb = {0};
 
-    strb_push(&sb, '!');
+    const char* res = "HTTP/1.1 200 OK\r\n\r\nHELLO";
 
-    str s = strb_build(sb);
+    int rfd, n;
+    for(int i=0; i<5; ++i) {
+        if((rfd = accept(lfd, NULL, NULL)) == -1) {
+            perror("ERROR: accept");
+            continue;
+        }
 
-    printf("CONTENT "STR_FMT" END\n", STR_ARG(s));
+        reqb.count = 0;
+        while((n = recv(rfd, req_buf, req_buf_size, 0)) == req_buf_size) {
+            da_append_many(&reqb, req_buf, req_buf_size);
+        }
+        if(n == -1) {
+            close(rfd);
+            perror("ERROR: recv");
+            continue;
+        }
+        da_append_many(&reqb, req_buf, n);
 
-    str x = str_substr(s, 5, s.count);
+        str req = strb_build(reqb);
 
-    printf("CONTENT "STR_FMT" END\n", STR_ARG(x));
+        printf(STR_FMT, STR_ARG(req));
 
-    putchar('0' + str_starts_with(s, x));
-    putchar('0' + str_starts_with(s, str_cstr("Hello")));
-    putchar('0' + str_starts_with(s, str_cstr("World")));
-    putchar('0' + str_starts_with(s, str_cstr("")));
-    putchar('0' + str_starts_with(s, s));
-    putchar('0' + str_starts_with(x, s));
-    putchar('0' + str_starts_with(x, str_cstr(",")));
+        if(send(rfd, res, strlen(res), 0) == -1) {
+            close(rfd);
+            perror("ERROR: send");
+            continue;
+        }
 
-    putchar('\n');
+        close(rfd);
+    }
 
-    strb_free(sb);
+    close(lfd);
+    strb_free(reqb);
 
     return 0;
 }
