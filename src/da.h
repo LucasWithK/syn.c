@@ -21,7 +21,7 @@
  *
  * -------------------------------------------------------------------------
  * IMPORTANT NOTICE:
- * This dynamic array implementation was originally sourced or heavily inspired
+ * This dynamic array implementation was originally sourced and heavily inspired
  * by code found here: `https://github.com/tsoding/nob.h`.
  *
  * Please ensure you comply with the original license terms of that repository

@@ -1,5 +1,5 @@
 /**
- * This file provides the implementations for string builder and view data structures.
+ * This file provides the implementations for a string builder and a string view data structure.
  *
  * A string builder is simply a dynamic array from `da.h` with the following shape:
  *
