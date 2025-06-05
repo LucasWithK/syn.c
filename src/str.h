@@ -98,7 +98,7 @@ str str_cstr(char *cstr) {
 }
 
 str str_substr(str s, size_t start, size_t end) {
-    assert(start < end && end <= s.count);
+    assert(start <= end && end <= s.count);
     return (str) {
         .items = s.items + start,
         .count = end - start,
@@ -113,5 +113,3 @@ bool str_starts_with(str a, str b) {
 #endif // STR_IMPLEMENTATION
 
 #endif // STR_H_
-
-
