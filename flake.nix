@@ -22,6 +22,8 @@
               clang-tools
               gnumake
               gdb
+              man-db
+              man-pages
             ];
           };
       });
