@@ -1,50 +1,16 @@
 /**
- * This file provides the implementations for a string builder and a string view data structure.
+ * This file provides the implementations for a string builder (`strb`)
+ * and a string view (`str`) data structure.
  *
- * A string builder is simply a dynamic array from `da.h` with the following shape:
+ * A string builder is simply a dynamic array from `da.h`.
  *
- * ```c
- * typedef struct {
- *  char *items;
- *  size_t count;
- *  size_t capacity;
- * } strb;
- * ```
- *
- * This means any `da_*` macros can be used on a string builder.
+ * This means any `da_*` definitions can be used on a string builder.
  *
  * A string view is like a window into any other string.
- * It has the following shape:
- *
- * ```c
- * typdef struct {
- *  char *items;
- *  size_t count;
- * } str;
- * ```
- *
- * The following definitions can be used on a string builder:
- *
- * `strb_push(&strb, char);`
- * `strb_append(&strb, cstr);`
- *
- * `str strb_build(strb sb);`
- *
- * `strb_free(strb);`
- *
- * The following definitions can be used on a string view:
- *
- * `str str_cstr(char *cstr);`
- *
- * `STR_ARG(str)` used togheter with `STR_FMT` for `printf` formatting.
- *
- * `str str_substr(str s, size_t start, size_t end);`
- * `bool str_starts_with(str a, str b);`
  *
  * It is recommended to construct a string using a string builder.
  * Then continue using it as an immutable data structure by creating a view from it.
  * And finally freeing the builder when no view exists anymore.
- * Never create a string view, just get it returned by a function.
  */
 
 #ifndef STR_H_
