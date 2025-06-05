@@ -39,12 +39,7 @@ int listenfd() {
 int main(void) {
     int lfd = listenfd();
 
-    const int req_buf_size = 1024;
-    char req_buf[req_buf_size];
-
     strb reqb = {0};
-
-    const char* res = "HTTP/1.1 200 OK\r\n\r\nHELLO";
 
     int rfd, n;
     for(int i=0; i<5; ++i) {
@@ -54,20 +49,24 @@ int main(void) {
         }
 
         reqb.count = 0;
-        while((n = recv(rfd, req_buf, req_buf_size, 0)) == req_buf_size) {
-            da_append_many(&reqb, req_buf, req_buf_size);
+        const int req_window = 2048;
+        da_reserve(&reqb, req_window);
+        while((n = recv(rfd, reqb.items + reqb.count, req_window, 0)) == req_window) {
+            reqb.count += req_window;
+            da_reserve(&reqb, reqb.count + req_window);
         }
         if(n == -1) {
             close(rfd);
             perror("ERROR: recv");
             continue;
         }
-        da_append_many(&reqb, req_buf, n);
+        reqb.count += n;
 
         str req = strb_build(reqb);
 
         printf(STR_FMT, STR_ARG(req));
 
+        const char* res = "HTTP/1.1 200 OK\r\n\r\nHELLO";
         if(send(rfd, res, strlen(res), 0) == -1) {
             close(rfd);
             perror("ERROR: send");
