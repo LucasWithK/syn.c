@@ -1,21 +1,23 @@
 /**
- * This file provides the macro implementations for a dynamic array data structure
+ * This file provides the macro implementations for a dynamic array data structure.
  * It requires a struct of the following shape for an array containing type `T`:
  *
+ * ```c
  * typedef struct {
  *  T *items;
  *  size_t count;
  *  size_t capacity;
  * } ts;
+ * ```
  *
- * Then the following macros can be used:
+ * The following macros can be used on any dynamic array:
  *
- * da_reserve(&da, new_capacity);
- * da_append(&da, item);
- * da_append_many(&da, new_items, new_items_count);
- * da_resize(&da, size);
+ * `da_reserve(&da, new_capacity);`
+ * `da_append(&da, item);`
+ * `da_append_many(&da, new_items, new_items_count);`
+ * `da_resize(&da, size);`
  *
- * da_free(da);
+ * `da_free(da);`
  *
  * -------------------------------------------------------------------------
  * IMPORTANT NOTICE:
