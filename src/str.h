@@ -51,9 +51,11 @@ bool str_starts_with(str a, str b);
 
 void str_split(str s, size_t mid, str *a, str *b);
 
-bool str_findc(str s, char c, size_t *i);
+bool str_find_char(str s, char c, size_t *i);
 
 bool str_find(str s, str n, size_t *i);
+
+str str_trim_n(str s, size_t n);
 
 #ifdef STR_IMPLEMENTATION
 
@@ -92,7 +94,7 @@ void str_split(str s, size_t mid, str *a, str *b) {
     b->count = s.count - mid;
 }
 
-bool str_findc(str s, char c, size_t *i) {
+bool str_find_char(str s, char c, size_t *i) {
     while(*i < s.count) {
         if(s.items[*i] == c) return true;
         (*i)++;
@@ -104,11 +106,19 @@ bool str_find(str s, str n, size_t *i) {
     if(n.count == 0 || s.count < n.count) return false;
 
     char c = n.items[0];
-    while(str_findc(s, c, i)) {
+    while(str_find_char(s, c, i)) {
         if(str_starts_with(str_substr(s, *i, s.count), n)) return true;
         (*i)++;
     }
     return false;
+}
+
+str str_trim_n(str s, size_t n) {
+    assert(n <= s.count);
+    return (str) {
+        .items = s.items + n,
+        .count = s.count - n,
+    };
 }
 
 #endif // STR_IMPLEMENTATION

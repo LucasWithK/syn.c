@@ -39,9 +39,6 @@ int listenfd() {
 int main(void) {
     int lfd = listenfd();
 
-    const str crlf = str_cstr("\r\n");
-    const str crlf2 = str_cstr("\r\n\r\n");
-
     int rfd;
     ssize_t n;
     strb reqb = {0};
@@ -66,9 +63,22 @@ int main(void) {
             continue;
         }
         reqb.count += n;
-
         str req = strb_build(reqb);
-        printf(STR_FMT, STR_ARG(req));
+
+        const str crlf = str_cstr("\r\n");
+
+        size_t start = 0, end = 0;
+        assert(str_find(req, crlf, &end));
+        str line = str_substr(req, start, end);
+        printf(STR_FMT"\n", STR_ARG(line));
+
+        while(1) {
+            start = end += crlf.count;
+            assert(str_find(req, crlf, &end));
+            if(start == end) break;
+            line = str_substr(req, start, end);
+            printf(STR_FMT"\n", STR_ARG(line));
+        }
 
         const char* res = "HTTP/1.1 200 OK\r\n\r\nHELLO";
 
