@@ -1,5 +1,7 @@
 {
-  inputs.nixpkgs.url = "nixpkgs/nixpkgs-unstable";
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixpkgs-unstable";
+  };
 
   outputs = { nixpkgs, ... } @ inputs:
     let

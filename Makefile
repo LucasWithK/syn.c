@@ -1,5 +1,6 @@
 
 CFLAGS = -Wall -Wextra -g -std=c17
+LDFLAGS =
 
 TARGET = sync
 
@@ -18,7 +19,7 @@ EXECUTABLE = $(BINDIR)/$(TARGET)
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS) | $(BUILDDIR) $(BINDIR)
-	$(CC) $^ -o $@
+	$(CC) $(LDFLAGS) $^ -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
 	$(CC) $(CFLAGS) -c $< -o $@
