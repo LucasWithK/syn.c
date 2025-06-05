@@ -11,11 +11,17 @@
     in
     {
       devShells = forAllSystems ({ pkgs }: {
-        default = pkgs.mkShell {
-          packages = with pkgs; [
-            # Add packages
-          ];
-        };
+        default = pkgs.mkShell.override
+          {
+            stdenv = pkgs.clangStdenv;
+          }
+          {
+            packages = with pkgs; [
+              clang-tools
+              gnumake
+              gdb
+            ];
+          };
       });
     };
 }
