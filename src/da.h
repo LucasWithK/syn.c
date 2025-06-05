@@ -28,7 +28,7 @@
 #include <string.h>
 
 #ifndef DA_INIT_CAPACITY
-#define DA_INIT_CAPACITY 64
+#define DA_INIT_CAPACITY 256
 #endif
 
 #define da_reserve(da, new_capacity)                                                    \

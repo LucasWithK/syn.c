@@ -46,7 +46,7 @@ int main(void) {
     ssize_t n;
     strb reqb = {0};
 
-    const size_t req_window = 1024;
+    const size_t req_window = 4096;
     da_reserve(&reqb, req_window);
 
     for(int i=0; i<1; ++i) {
