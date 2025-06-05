@@ -39,18 +39,23 @@ int listenfd() {
 int main(void) {
     int lfd = listenfd();
 
-    int rfd, n;
+    const str crlf = str_cstr("\r\n");
+    const str crlf2 = str_cstr("\r\n\r\n");
+
+    int rfd;
+    ssize_t n;
     strb reqb = {0};
-    for(int i=0; i<5; ++i) {
+
+    const size_t req_window = 1024;
+    da_reserve(&reqb, req_window);
+
+    for(int i=0; i<1; ++i) {
         if((rfd = accept(lfd, NULL, NULL)) == -1) {
             perror("ERROR: accept");
             continue;
         }
 
-        const int req_window = 2048;
-
         reqb.count = 0;
-        da_reserve(&reqb, req_window);
         while((n = recv(rfd, reqb.items + reqb.count, req_window, 0)) == req_window) {
             reqb.count += req_window;
             da_reserve(&reqb, reqb.count + req_window);
@@ -63,7 +68,6 @@ int main(void) {
         reqb.count += n;
 
         str req = strb_build(reqb);
-
         printf(STR_FMT, STR_ARG(req));
 
         const char* res = "HTTP/1.1 200 OK\r\n\r\nHELLO";
