@@ -97,6 +97,11 @@ bool str_find(str s, str n, size_t *i) {
     return false;
 }
 
+bool str_contains(str s, str n) {
+    size_t i = 0;
+    return str_find(s, n, &i);
+}
+
 str str_trim_n(str s, size_t n) {
     assert(n <= s.count);
     return (str) {
