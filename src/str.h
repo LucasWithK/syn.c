@@ -1,7 +1,7 @@
 #ifndef STR_H_
 #define STR_H_
 
-#include "da.h"
+#include <stdlib.h>
 #include <stdbool.h>
 
 typedef struct {

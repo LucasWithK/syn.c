@@ -14,6 +14,7 @@
  */
 
 #include "str.h"
+
 #include "da.h"
 
 void strb_push(strb *sb, char c) {

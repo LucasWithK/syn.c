@@ -22,4 +22,4 @@ typedef struct {
 
 bool parse_req(str req_line, request *req);
 
-#endif
+#endif // REQ_H_
