@@ -1,6 +1,7 @@
 #include "req.h"
 
 #include <stdio.h>
+#include <assert.h>
 
 bool parse_req(str req_line, request *req) {
     const str sp = str_cstr(" ");
