@@ -4,9 +4,8 @@
 #include <unistd.h>
 
 #include "da.h"
-
-#define STR_IMPLEMENTATION
 #include "str.h"
+#include "req.h"
 
 int listenfd() {
     int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -63,26 +62,37 @@ int main(void) {
             continue;
         }
         reqb.count += n;
-        str req = strb_build(reqb);
+        str req_str = strb_build(&reqb);
 
         const str crlf = str_cstr("\r\n");
 
         size_t start = 0, end = 0;
-        assert(str_find(req, crlf, &end));
-        str line = str_substr(req, start, end);
+        assert(str_find(req_str, crlf, &end));
+        while(start == end) { // ignore at least one empty line
+            start = end += crlf.count;
+            assert(str_find(req_str, crlf, &end));
+        }
+        str line = str_substr(req_str, start, end);
         printf(STR_FMT"\n", STR_ARG(line));
+
+        request req = {0};
+        if(!parse_req(line, &req)) {
+            close(rfd);
+            perror("ERROR: parse_req");
+            continue;
+        }
 
         while(1) {
             start = end += crlf.count;
-            assert(str_find(req, crlf, &end));
+            assert(str_find(req_str, crlf, &end));
             if(start == end) break;
-            line = str_substr(req, start, end);
+            line = str_substr(req_str, start, end);
             printf(STR_FMT"\n", STR_ARG(line));
         }
 
-        const char* res = "HTTP/1.1 200 OK\r\n\r\nHELLO";
+        const char* res_str = "HTTP/1.1 200 OK\r\n\r\nHELLO";
 
-        if(send(rfd, res, strlen(res), 0) == -1) {
+        if(send(rfd, res_str, strlen(res_str), 0) == -1) {
             close(rfd);
             perror("ERROR: send");
             continue;
