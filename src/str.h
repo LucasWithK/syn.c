@@ -15,13 +15,13 @@ typedef struct {
     size_t count;
 } str;
 
-void strb_push(strb sb, char c);
+void strb_push(strb *sb, char c);
 
-void strb_append_cstr(strb sb, char *cs);
+void strb_append_cstr(strb *sb, char *cs);
 
-void strb_append(strb sb, str s);
+void strb_append(strb *sb, str s);
 
-str strb_build(strb sb);
+str strb_build(strb *sb);
 
 void strb_free(strb sb);
 
@@ -33,6 +33,8 @@ str str_cstr(char *cstr);
 str str_substr(str s, size_t start, size_t end);
 
 bool str_starts_with(str a, str b);
+
+bool str_eq(str a, str b);
 
 void str_split(str s, size_t mid, str *a, str *b);
 

@@ -28,10 +28,10 @@ void strb_append(strb *sb, str s) {
     da_append_many(sb, s.items, s.count);
 }
 
-str strb_build(strb sb) {
+str strb_build(strb *sb) {
     return (str) {
-        .items = sb.items,
-        .count = sb.count,
+        .items = sb->items,
+        .count = sb->count,
     };
 }
 
@@ -57,6 +57,11 @@ str str_substr(str s, size_t start, size_t end) {
 bool str_starts_with(str a, str b) {
     if(a.count < b.count) return false;
     return memcmp(a.items, b.items, b.count) == 0;
+}
+
+bool str_eq(str a, str b) {
+    if(a.count != b.count) return false;
+    return memcmp(a.items, b.items, a.count) == 0;
 }
 
 void str_split(str s, size_t mid, str *a, str *b) {
