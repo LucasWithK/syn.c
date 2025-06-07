@@ -12,8 +12,9 @@
 
 size_t hm_djb2(str s) {
     size_t hash = 5381;
-    for(size_t i=0; i<s.count; i++)
+    for(size_t i=0; i<s.count; i++) {
         hash = ((hash << 5) + hash) + s.items[i];
+    }
     return hash;
 }
 
@@ -22,9 +23,11 @@ void hm_reserve(strhm *hm, size_t capacity) {
         strhm new_hm = {0};
         da_reserve(&new_hm, capacity);
 
-        for(size_t i=0; i<hm->capacity; ++i)
-            if(hm->items[i].hash != 0)
+        for(size_t i=0; i<hm->capacity; ++i) {
+            if(hm->items[i].hash != 0) {
                 hm_insert(&new_hm, hm->items[i].key, hm->items[i].value);
+            }
+        }
 
         free(hm->items);
         hm->items = new_hm.items;
@@ -38,9 +41,10 @@ void hm_insert(strhm *hm, str key, str value) {
         hm_reserve(hm, hm->capacity * 2);
     size_t hash = HM_HASH(key);
     size_t idx = hash & (hm->capacity - 1);
-    while(hm->items[idx].hash != hash)
-        if(hm->items[idx].hash == 0) break;;
+    while(hm->items[idx].hash != hash) {
+        if(hm->items[idx].hash == 0) break;
         idx = (idx + 1) & (hm->capacity - 1);
+    }
     hm->items[idx].hash = hash;
     hm->items[idx].key = key;
     hm->items[idx].value = value;
