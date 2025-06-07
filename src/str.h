@@ -40,8 +40,12 @@ void str_split(str s, size_t mid, str *a, str *b);
 
 bool str_find_char(str s, char c, size_t *i);
 
+bool str_contains_char(str s, char c);
+
 bool str_find(str s, str n, size_t *i);
 
 str str_trim_n(str s, size_t n);
+
+str str_trim(str s, str ws);
 
 #endif // STR_H_

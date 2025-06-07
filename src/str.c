@@ -81,6 +81,11 @@ bool str_find_char(str s, char c, size_t *i) {
     return false;
 }
 
+bool str_contains_char(str s, char c) {
+    size_t i = 0;
+    return str_find_char(s, c, &i);
+}
+
 bool str_find(str s, str n, size_t *i) {
     if(n.count == 0 || s.count < n.count) return false;
 
@@ -97,5 +102,19 @@ str str_trim_n(str s, size_t n) {
     return (str) {
         .items = s.items + n,
         .count = s.count - n,
+    };
+}
+
+str str_trim(str s, str ws) {
+    size_t i = 0;
+    while(i < s.count && str_contains_char(ws, s.items[i])) i++;
+
+    size_t j = 0;
+    if(i != s.count)
+        while(str_contains_char(ws, s.items[s.count-j-1])) j++;
+
+    return (str) {
+        .items = s.items + i,
+        .count = s.count - i - j,
     };
 }

@@ -2,6 +2,7 @@
 #define REQ_H_
 
 #include "str.h"
+#include "strhm.h"
 
 typedef enum {
     GET,
@@ -18,8 +19,11 @@ typedef struct {
     method m;
     str target;
     str version;
+    strhm fields;
 } request;
 
-bool parse_req(str req_line, request *req);
+bool parse_start(str start_line, request *req);
+
+bool parse_field(str field_line, request *req);
 
 #endif // REQ_H_

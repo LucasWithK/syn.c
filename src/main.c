@@ -6,6 +6,7 @@
 #include "da.h"
 #include "str.h"
 #include "req.h"
+#include "strhm.h"
 
 int listenfd() {
     int fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -64,6 +65,8 @@ int main(void) {
         reqb.count += n;
         str req_str = strb_build(&reqb);
 
+        request req = {0};
+
         const str crlf = str_cstr("\r\n");
 
         size_t start = 0, end = 0;
@@ -73,10 +76,7 @@ int main(void) {
             assert(str_find(req_str, crlf, &end));
         }
         str line = str_substr(req_str, start, end);
-        printf(STR_FMT"\n", STR_ARG(line));
-
-        request req = {0};
-        if(!parse_req(line, &req)) {
+        if(!parse_start(line, &req)) {
             close(rfd);
             perror("ERROR: parse_req");
             continue;
@@ -87,7 +87,7 @@ int main(void) {
             assert(str_find(req_str, crlf, &end));
             if(start == end) break;
             line = str_substr(req_str, start, end);
-            printf(STR_FMT"\n", STR_ARG(line));
+            assert(parse_field(line, &req));
         }
 
         const char* res_str = "HTTP/1.1 200 OK\r\n\r\nHELLO";
