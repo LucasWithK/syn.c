@@ -5,7 +5,7 @@
 
 #include "da.h"
 #include "str.h"
-#include "req.h"
+#include "req_res.h"
 #include "strhm.h"
 
 int listenfd() {
@@ -41,10 +41,13 @@ int main(void) {
 
     int rfd;
     ssize_t n;
-    strb reqb = {0};
+    strb reqb = {0}, resb = {0};
 
     const size_t req_window = 4096;
     da_reserve(&reqb, req_window);
+
+    const size_t res_window = 1024;
+    da_reserve(&resb, res_window);
 
     for(int i=0; i<1; ++i) {
         if((rfd = accept(lfd, NULL, NULL)) == -1) {
@@ -67,42 +70,39 @@ int main(void) {
 
         request req = {0};
 
-        const str crlf = str_cstr("\r\n");
-
-        size_t start = 0, end = 0;
-        assert(str_find(req_str, crlf, &end));
-        while(start == end) { // ignore at least one empty line
-            start = end += crlf.count;
-            assert(str_find(req_str, crlf, &end));
-        }
-        str line = str_substr(req_str, start, end);
-        if(!parse_start(line, &req)) {
+        if(!req_new(req_str, &req)) {
+            req_free(req);
             close(rfd);
-            perror("ERROR: parse_req");
+            perror("ERROR: req_new");
             continue;
         }
 
-        while(1) {
-            start = end += crlf.count;
-            assert(str_find(req_str, crlf, &end));
-            if(start == end) break;
-            line = str_substr(req_str, start, end);
-            assert(parse_field(line, &req));
-        }
+        const str ok = str_cstr("200 OK");
+        const str body = str_cstr("HELLO");
 
-        const char* res_str = "HTTP/1.1 200 OK\r\n\r\nHELLO";
+        response res = {0};
+        res_new(ok, body, &res);
 
-        if(send(rfd, res_str, strlen(res_str), 0) == -1) {
+        resb.count = 0;
+        res_build(&res, &resb);
+
+        str res_str = strb_build(&resb);
+        if(send(rfd, res_str.items, res_str.count, 0) == -1) {
+            req_free(req);
+            res_free(res);
             close(rfd);
             perror("ERROR: send");
             continue;
         }
 
+        req_free(req);
+        res_free(res);
         close(rfd);
     }
 
     close(lfd);
     strb_free(reqb);
+    strb_free(resb);
 
     return 0;
 }

@@ -51,7 +51,11 @@
         (da)->items[(da)->count++] = (item);    \
     } while (0)
 
-#define da_free(da) free((da).items)
+#define da_free(da)         \
+    do {                    \
+        free((da).items);   \
+        (da).items = 0;     \
+    } while (0)             \
 
 #define da_append_many(da, new_items, new_items_count)                                          \
     do {                                                                                        \
