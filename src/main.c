@@ -49,7 +49,8 @@ int main(void) {
     const size_t res_window = 1024;
     da_reserve(&resb, res_window);
 
-    for(int i=0; i<1; ++i) {
+    bool run = true;
+    while(run) {
         if((rfd = accept(lfd, NULL, NULL)) == -1) {
             perror("ERROR: accept");
             continue;
@@ -77,11 +78,28 @@ int main(void) {
             continue;
         }
 
-        const str ok = str_cstr("200 OK");
-        const str body = str_cstr("HELLO");
-
         response res = {0};
-        res_new(ok, body, &res);
+
+        const str ok = str_cstr("200 OK");
+        const str slash = str_cstr("/");
+        const str exit_str = str_cstr("/exit");
+
+        switch (req.m) {
+        case GET: if(str_eq(req.target, slash)) {
+            const str body = str_cstr("<p>HOME</p><a href=\"/exit\">EXIT</a>");
+            res_new(ok, body, &res);
+            break;
+        } else if(str_eq(req.target, exit_str)) {
+            const str body = str_cstr("EXIT");
+            res_new(ok, body, &res);
+            run = false;
+            break;
+        }
+        default: {
+            const str not_impl = str_cstr("501 Not Implemented");
+            const str empty = str_cstr("");
+            res_new(not_impl, empty, &res);
+        }};
 
         resb.count = 0;
         res_build(&res, &resb);

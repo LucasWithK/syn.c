@@ -34,14 +34,16 @@ bool req_new(str req_str, request *req);
 
 bool req_start(str start_line, request *req);
 
+bool req_field(str field_line, request *req);
+
 void req_free(request req);
 
 void res_new(str status, str body, response *res);
 
+void res_field(str key, str value, response *res);
+
 void res_build(response *res, strb *buf);
 
 void res_free(response res);
-
-bool req_res_field(str field_line, strhm *fields);
 
 #endif // REQ_RES_H_
