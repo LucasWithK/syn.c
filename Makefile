@@ -1,5 +1,5 @@
 
-CFLAGS = -Wall -Wextra -g -std=c17
+CFLAGS = -Wall -Wextra -g -std=c17 -O3
 LDFLAGS =
 
 TARGET = sync
