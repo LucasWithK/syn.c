@@ -26,7 +26,8 @@ void th_init() {
     }
 }
 
-void* routine(void *_arg) {
+void* routine(void *arg) {
+    (void)arg;
 
     ssize_t n;
     strb reqb = {0}, resb = {0};
@@ -113,8 +114,6 @@ void* routine(void *_arg) {
         req_free(req);
         res_free(res);
         close(rfd);
-
-        sleep(1);
     }
 
     strb_free(reqb);
@@ -162,4 +161,9 @@ void th_free() {
     da_free(_data.queue);
     pthread_cond_destroy(&_data.notify);
     pthread_mutex_destroy(&_data.lock);
+}
+
+void th_debug() {
+    printf("Created `%d` threads.\n", _data.pool.capacity);
+    printf("Created `%d` large queue.\n", _data.queue.capacity);
 }

@@ -33,7 +33,7 @@ void th_init();
 
 bool th_queue(int rfd);
 
-void* routine(void *_arg);
+void* routine(void *arg);
 
 void th_free();
 

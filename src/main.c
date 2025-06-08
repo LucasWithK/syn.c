@@ -44,7 +44,6 @@ int main(void) {
     th_init();
 
     int rfd;
-    size_t reqs = 0;
     while(1) {
         if((rfd = accept(lfd, NULL, NULL)) == -1) {
             perror("ERROR: accept");
@@ -54,11 +53,12 @@ int main(void) {
             close(rfd);
             break;
         }
-        reqs++;
     }
 
     close(lfd);
     th_free();
+
+    th_debug();
 
     return 0;
 }
